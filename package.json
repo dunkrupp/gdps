@@ -5,12 +5,16 @@
   "main": "index.js",
   "dependencies": {
     "discord.js": "^11.5.1",
-    "dotenv": "^8.1.0"
+    "dotenv": "^8.1.0",
+    "sqlite3": "^4.1.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "standard": "^14.3.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "standard",
+    "setup": "node ./setup/install.js"
   },
-  "author": "",
+  "author": "Drew Ruppel <drewruppel@gmail.com>",
   "license": "ISC"
 }
