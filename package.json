@@ -13,7 +13,7 @@
   },
   "scripts": {
     "test": "standard",
-    "setup": "node ./setup/install.js"
+    "setup": "npm install && node ./setup/install.js"
   },
   "author": "Drew Ruppel <drewruppel@gmail.com>",
   "license": "ISC"

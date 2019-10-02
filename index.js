@@ -1,19 +1,20 @@
 'use strict'
 
-require('dotenv').config();
+require('dotenv').config()
 
-const discord = require('discord.js');
-const client = new discord.Client();
-const sqlite3 = require('sqlite3').verbose();
+const discord = require('discord.js')
+const offender = require('./lib/offender')
+const citation = require('./lib/citation')
+const client = new discord.Client()
 
 client.on('ready', () => {
-  console.log('Bot ready');
+  console.log('Bot ready')
 })
 
 client.on('message', (message) => {
-  if (message.content.startsWith('ping')) {
-    message.channel.send('pong')
+  if (message.author.bot) {
+    return false
   }
 })
 
-client.login(process.env.BOT_TOKEN);
+client.login(process.env.BOT_TOKEN)
