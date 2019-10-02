@@ -1,9 +1,9 @@
 GDPS Citations Discord Bot
 ===
 
+ 
 Schema
 ---
-
 
 ##### Offenders
 ```
@@ -39,4 +39,7 @@ npm run setup
 
 # Run Tests and Standards
 npm run test
+
+# Run Bot
+node index.js
 ```
