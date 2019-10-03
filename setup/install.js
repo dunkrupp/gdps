@@ -2,9 +2,7 @@
 
 /* Set DB Path */
 const path = require('path')
-const dbPath = path.join(__dirname, '/../db/gdps.db')
-
-console.log(dbPath)
+const dbPath = path.join(__dirname, '/../database/gdps.db')
 
 /* Create DB if it doesn't exist */
 const fs = require('fs')

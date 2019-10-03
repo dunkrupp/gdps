@@ -24,7 +24,7 @@ CREATE TABLE citations (
     updated_at datetime NOT NULL DEFAULT current_timestamp,
     deleted_at datetime,
     FOREIGN KEY (offender_id)
-        REFERENCES offenders (offender_id)
+        REFERENCES offenders (id)
             ON DELETE CASCADE
             ON UPDATE NO ACTION
 );
