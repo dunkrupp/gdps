@@ -1,4 +1,4 @@
-const Discord = require('discord.js')
+const discord = require('discord.js')
 const Bot = require('./bot')
 
 class Help {
@@ -7,7 +7,7 @@ class Help {
     this.title = 'Help | Commands'
     this.description = 'Any references to a \'player\' should be replaced with the target player name. ' +
       '\'id\' with the appopriate identifier.'
-    this.embed = new Discord.RichEmbed()
+    this.embed = new discord.RichEmbed()
     this.bot = new Bot()
   }
 

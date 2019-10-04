@@ -4,15 +4,17 @@
 const config = require('./config/app.json')
 const pfx = config.prefix
 
-/** Autoload */
-const app = require('./app/autoload')
+/** Bootstrap Application */
+const app = require('./bootstrap/app')
 const discord = require('discord.js')
 
 /** Classes */
-const client = new discord.Client()
-const help = new app.Help()
+const Client = new discord.Client()
+const Help = new app.Help()
+const Roe = new app.Roe()
+const Citation = new app.Citation()
 
-client.on('ready', () => {
+Client.on('ready', () => {
   const fs = require('fs')
 
   fs.access(config.database, error => {
@@ -25,7 +27,7 @@ client.on('ready', () => {
   console.log('Bot Ready')
 })
 
-client.on('message', message => {
+Client.on('message', message => {
   if (
     message.author.bot ||
     !message.content.startsWith(pfx)
@@ -34,29 +36,27 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(pfx)) {
-    const command = message.content.trimStart()
-
-    console.log(command)
+    const args = message.content.slice(pfx.length).trim().split(/ +/g)
+    const command = args.shift().toLowerCase()
 
     switch (command) {
-      case pfx + 'help':
-        console.log(help)
-        message.channel.send(help.message)
+      case 'help':
+        message.channel.send(
+          Help.message
+        )
         break
-      case pfx + 'roe':
-        message.channel.send('roe test')
+      case 'roe':
+        message.channel.send(
+          Roe.message
+        )
         break
-      case pfx + 'citations':
-        message.channel.send('citations test')
-        break
-      case pfx + 'player':
-        message.channel.send('player test')
-        break
-      case pfx + 'config':
-        message.channel.send('config test')
+      case 'citations':
+        message.channel.send(
+          Citation.dispatch(command)
+        )
         break
     }
   }
 })
 
-client.login(config.token)
+Client.login(config.token)

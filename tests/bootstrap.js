@@ -1,4 +1,4 @@
-const app = require('../app/autoload')
+const app = require('../bootstrap/autoload')
 const Help = new app.Help()
 const Bot = new app.Bot()
 const Citation = new app.Citation()
