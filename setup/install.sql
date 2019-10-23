@@ -41,7 +41,7 @@ CREATE TRIGGER tg_offenders_updated_at
     ON offenders FOR EACH ROW
     BEGIN
         UPDATE offenders SET updated_at = current_timestamp
-            WHERE id = old.id
+            WHERE id = old.id;
 END;
 
 -- trigger (updated_at)
@@ -50,5 +50,5 @@ CREATE TRIGGER tg_citations_updated_at
     ON citations FOR EACH ROW
     BEGIN
         UPDATE citations SET updated_at = current_timestamp
-            WHERE id = old.id
+            WHERE id = old.id;
 END;
