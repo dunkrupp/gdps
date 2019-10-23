@@ -4,8 +4,8 @@
   "description": "GDPS Discord Bot",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^11.5.1",
-    "sqlite3": "^4.1.0"
+    "better-sqlite3": "^5.4.3",
+    "discord.js": "^11.5.1"
   },
   "devDependencies": {
     "standard": "^14.3.1"
