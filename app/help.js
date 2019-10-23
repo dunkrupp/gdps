@@ -22,7 +22,7 @@ class Help {
       '- Invokes Help Command'
     )
     this.embed.addField(
-      '```.citation \'player\'```',
+      '```.citation search \'player\'```',
       '- Displays all citation related information for a user if they exist.'
     )
     this.embed.addField(

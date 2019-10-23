@@ -2,14 +2,13 @@
 
 /** Config */
 const config = require('./config/app.json')
-const pfx = config.prefix
 
 /** Bootstrap Application */
 const app = require('./bootstrap/app')
-const discord = require('discord.js')
 
 /** Classes */
-const Client = new discord.Client()
+const Client = new app.Discord.Client()
+const Command = new app.Command()
 const Help = new app.Help()
 const Roe = new app.Roe()
 const Citation = new app.Citation()
@@ -30,31 +29,43 @@ Client.on('ready', () => {
 Client.on('message', message => {
   if (
     message.author.bot ||
-    !message.content.startsWith(pfx)
+    !message.content.startsWith(config.prefix)
   ) {
     return false
   }
 
-  if (message.content.startsWith(pfx)) {
-    const args = message.content.slice(pfx.length).trim().split(/ +/g)
-    const command = args.shift().toLowerCase()
+  const command = Command.parse(
+    message.content
+  )
 
-    switch (command) {
-      case 'help':
+  console.log(command)
+
+  switch (command) {
+    case 'help': {
+      message.channel.send(
+        Help.message
+      )
+      break
+    }
+    case 'roe': {
+      message.channel.send(
+        Roe.message
+      )
+      break
+    }
+    case 'citation': {
+      const response = Citation.dispatch(command)
+
+      if (response) {
         message.channel.send(
-          Help.message
+          response
         )
-        break
-      case 'roe':
-        message.channel.send(
-          Roe.message
-        )
-        break
-      case 'citations':
-        message.channel.send(
-          Citation.dispatch(command)
-        )
-        break
+      }
+      break
+    }
+    default: {
+      // Do Nothing
+      break
     }
   }
 })
