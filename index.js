@@ -38,8 +38,6 @@ Client.on('message', message => {
     message.content
   )
 
-  console.log(command)
-
   switch (command) {
     case 'help': {
       message.channel.send(

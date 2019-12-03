@@ -1,6 +1,7 @@
 'use strict'
 
 const config = require('../config/app.json')
+const app = require('../bootstrap/app')
 
 class Command {
   constructor () {
@@ -10,6 +11,7 @@ class Command {
     this._action = null
     this._target = null
     this._details = null
+    this._class = null
   }
 
   get available () {
@@ -17,7 +19,7 @@ class Command {
   }
 
   get instance () {
-    return this._available[this.name][this.action]
+    return this._available[this.name]
   }
 
   get prefix () {
@@ -40,6 +42,10 @@ class Command {
     return this._details
   }
 
+  get class () {
+    return this._class
+  }
+
   set name (value) {
     this._name = value
   }
@@ -56,6 +62,10 @@ class Command {
     this._details = value.join(' ')
   }
 
+  set class (value) {
+    this._class = value
+  }
+
   /**
    * @param message
    * @returns {Command}
@@ -64,13 +74,13 @@ class Command {
     const parts = this.parts(message)
     const [name, action, target, ...details] = parts
 
-    this.name = name
+    this.name = app.capitalize(name)
     this.action = action
     this.target = target
     this.details = details
 
     if (this.validate()) {
-      return this
+      return app.resolve(this.name)
     }
 
     return null
@@ -84,14 +94,24 @@ class Command {
     return message.slice(this._prefix.length).trim().split(/ +/g)
   }
 
+  /*
+  * @todo: add shorthands
+  */
   validate () {
     if (this.exists()) {
-      const structure = this.instance
-      const full = structure.long
-      const short = structure.short
-      const args = structure.args
-      console.log(full, short, args)
+      const syntax = this.instance
+      const action = syntax[this.action]
+
+      if (syntax && syntax.args === 0) {
+        return true
+      }
+
+      if (syntax && action && action in syntax) {
+        return true
+      }
     }
+
+    return false
   }
 
   /**
