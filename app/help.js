@@ -1,3 +1,5 @@
+'use strict'
+
 const discord = require('discord.js')
 const Bot = require('./bot')
 

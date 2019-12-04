@@ -1,12 +1,14 @@
+'use strict'
+
 const discord = require('discord.js')
 const Bot = require('./bot')
 
+/* @todo: Make driven by markdown or something */
 class Roe {
   constructor () {
     this.command = 'roe'
     this.title = 'Rules of Engagement'
-    this.description = 'Any references to a \'player\' should be replaced with the target player name. ' +
-      '\'id\' with the appopriate identifier.'
+    this.description = 'Block description of what this all means.'
     this.embed = new discord.RichEmbed()
     this.bot = new Bot()
   }
@@ -18,6 +20,8 @@ class Roe {
     this.embed.setColor(5998487)
     this.embed.setTimestamp(Date.now())
     this.embed.addField('Rules', 'TBD')
+
+    return this.embed
   }
 }
 

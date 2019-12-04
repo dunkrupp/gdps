@@ -1,8 +1,8 @@
 'use strict'
 
 const config = require('../config/app.json')
-const app = require('../bootstrap/app')
 
+/* @todo: command suggestions if not matched */
 class Command {
   constructor () {
     this._available = config.commands
@@ -12,6 +12,7 @@ class Command {
     this._target = null
     this._details = null
     this._class = null
+    this._error = null
   }
 
   get available () {
@@ -24,6 +25,10 @@ class Command {
 
   get prefix () {
     return this._prefix
+  }
+
+  get error () {
+    return this._error
   }
 
   get name () {
@@ -44,6 +49,10 @@ class Command {
 
   get class () {
     return this._class
+  }
+
+  set error (value) {
+    this._error = value
   }
 
   set name (value) {
@@ -74,16 +83,16 @@ class Command {
     const parts = this.parts(message)
     const [name, action, target, ...details] = parts
 
-    this.name = app.capitalize(name)
+    this.name = name
     this.action = action
     this.target = target
     this.details = details
 
     if (this.validate()) {
-      return app.resolve(this.name)
+      return this.name
     }
 
-    return null
+    return this.error
   }
 
   /**
@@ -96,16 +105,23 @@ class Command {
 
   /*
   * @todo: add shorthands
+  * @todo: Check simple/complex type. Sub-actions etc.
   */
   validate () {
     if (this.exists()) {
       const syntax = this.instance
       const action = syntax[this.action]
 
-      if (syntax && syntax.args === 0) {
+      /* Simple Command */
+      if (syntax && syntax.type === 'simple') {
         return true
       }
 
+      if (syntax && syntax.type === 'complex') {
+        /* @todo: add complex logic, assign errors for later processing */
+      }
+
+      /* Complex Command */
       if (syntax && action && action in syntax) {
         return true
       }

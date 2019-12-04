@@ -38,33 +38,49 @@ Client.on('message', message => {
     message.content
   )
 
-  switch (command) {
-    case 'help': {
-      message.channel.send(
-        Help.message
+  /** @todo: process error if exists */
+  if (command.error) {
+    error(command.error)
+  } else {
+    console.log(command)
+    console.log(
+      app.resolve(
+        app.capitalize(command)
       )
-      break
-    }
-    case 'roe': {
-      message.channel.send(
-        Roe.message
-      )
-      break
-    }
-    case 'citation': {
-      const response = Citation.dispatch(command)
+    )
 
-      if (response) {
+    switch (command) {
+      case 'help': {
         message.channel.send(
-          response
+          Help.message
         )
+        break
       }
-      break
+      case 'roe': {
+        message.channel.send(
+          Roe.message
+        )
+        break
+      }
+      case 'citation': {
+        const response = Citation.dispatch(command)
+
+        if (response) {
+          message.channel.send(
+            response
+          )
+        }
+        break
+      }
+      default: {
+        error()
+        break
+      }
     }
-    default: {
-      // Do Nothing
-      break
-    }
+  }
+
+  function error (errorMessage) {
+    message.reply(errorMessage || 'I could not find a command that matches that syntax, use .help to see commands available')
   }
 })
 
