@@ -32,6 +32,11 @@ class Citation {
 
     )
   }
+
+  run (comment) {
+    // Do logic
+    return 'test citation'
+  }
 }
 
 module.exports = Citation

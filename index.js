@@ -46,7 +46,6 @@ Client.on('message', message => {
     message.content
   )
 
-  console.log(command)
   /** @todo: process error if exists */
   if (command.hasErrors()) {
     reply(command.errors)

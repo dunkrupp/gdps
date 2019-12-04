@@ -23,6 +23,10 @@ class Roe {
 
     return this.embed
   }
+
+  run (command) {
+    return this.message
+  }
 }
 
 module.exports = Roe

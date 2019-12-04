@@ -50,6 +50,10 @@ class Help {
 
     return this.embed
   }
+
+  run (command) {
+    return this.message
+  }
 }
 
 module.exports = Help
