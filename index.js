@@ -9,13 +9,12 @@ const app = require('./bootstrap/app')
 /** Classes */
 const Client = new app.Discord.Client()
 const Command = new app.Command()
-const Help = new app.Help()
-const Roe = new app.Roe()
-const Citation = new app.Citation()
 
+/* Start-up Checks */
 Client.on('ready', () => {
   const fs = require('fs')
 
+  /* Check for Database */
   fs.access(config.database, error => {
     if (!error) {
       console.log('Database Ready')
@@ -24,6 +23,15 @@ Client.on('ready', () => {
     }
   })
   console.log('Bot Ready')
+
+  /* Set Bot */
+  Client.user.setStatus('available')
+  Client.user.setPresence({
+    game: {
+      name: 'orders.',
+      type: 'LISTENING'
+    }
+  })
 })
 
 Client.on('message', message => {
@@ -38,49 +46,38 @@ Client.on('message', message => {
     message.content
   )
 
+  console.log(command)
   /** @todo: process error if exists */
-  if (command.error) {
-    error(command.error)
+  if (command.hasErrors()) {
+    reply(command.errors)
   } else {
-    console.log(command)
-    console.log(
-      app.resolve(
-        app.capitalize(command)
+    try {
+      message.channel.send(
+        app.dispatch(command)
       )
-    )
-
-    switch (command) {
-      case 'help': {
-        message.channel.send(
-          Help.message
-        )
-        break
-      }
-      case 'roe': {
-        message.channel.send(
-          Roe.message
-        )
-        break
-      }
-      case 'citation': {
-        const response = Citation.dispatch(command)
-
-        if (response) {
-          message.channel.send(
-            response
-          )
-        }
-        break
-      }
-      default: {
-        error()
-        break
-      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
-  function error (errorMessage) {
-    message.reply(errorMessage || 'I could not find a command that matches that syntax, use .help to see commands available')
+  command.clean()
+
+  /**
+   * Respond with any errors.
+   * @param errors
+   */
+  function reply (errors) {
+    let text = ''
+    if (Array.isArray(errors)) {
+      text = errors.map(error => `${error.message}`)
+    }
+    if (typeof errors === 'string') {
+      text = errors
+    }
+    message.reply(
+      text ||
+      'I could not find a command that matches that syntax, use .help to see commands available'
+    )
   }
 })
 

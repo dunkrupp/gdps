@@ -16,7 +16,11 @@ module.exports = {
    * @param instance
    */
   resolve: function (instance) {
-    return new this[instance]()
+    try {
+      return new this[instance]()
+    } catch (error) {
+      console.error(`Error accessing ${instance} from container.`)
+    }
   },
 
   /**
@@ -34,7 +38,24 @@ module.exports = {
    * @returns {string}
    */
   capitalize: function (string) {
-    if (typeof string !== 'string') return ''
+    if (typeof string !== 'string') {
+      return ''
+    }
     return string.charAt(0).toUpperCase() + string.slice(1)
+  },
+
+  /**
+   * Calls the classes run function to retrieve the formatted message for the user.
+   * @param command
+   * @return {string|void}
+   */
+  dispatch: function (command) {
+    if (this.exists(this.capitalize(command.name))) {
+      const resolved = this.resolve(
+        this.capitalize(command.name)
+      )
+
+      return resolved.run(command)
+    }
   }
 }
