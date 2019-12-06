@@ -41,7 +41,7 @@ class Help {
     )
     this.embed.addField(
       '```.citation clear \'player\'```',
-      '- Add citation to a player.'
+      '- Clears all citations from a player.'
     )
     this.embed.addField(
       '```.citation resolve \'player\' \'id\'```',
