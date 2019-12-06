@@ -2,10 +2,9 @@
 
 const config = require('../config/app.json')
 
-/* @todo: command suggestions if not matched */
 class Command {
   constructor () {
-    this._available = config.commands
+    this._commands = config.commands
     this._prefix = config.prefix
     this._name = ''
     this._action = ''
@@ -17,15 +16,15 @@ class Command {
   /**
    * @returns {Object}
    */
-  get available () {
-    return this._available
+  get commands () {
+    return this._commands
   }
 
   /**
    * @returns {*}
    */
   get instance () {
-    return this._available[this.name]
+    return this._commands[this.name]
   }
 
   /**
@@ -36,7 +35,7 @@ class Command {
   }
 
   /**
-   * @returns {[]|*[]}
+   * @returns {[]}
    */
   get errors () {
     return this._errors
@@ -71,35 +70,35 @@ class Command {
   }
 
   /**
-   * @param error
+   * @param   error
    */
   set errors (error) {
     this._errors.push(error)
   }
 
   /**
-   * @param string
+   * @param   {string}  string
    */
   set name (string) {
     this._name = string
   }
 
   /**
-   * @param string
+   * @param   {string}  string
    */
   set action (string) {
     this._action = string
   }
 
   /**
-   * @param string
+   * @param   {string}  string
    */
   set target (string) {
     this._target = string
   }
 
   /**
-   * @param array
+   * @param   {Array}   array
    */
   set details (array) {
     if (Array.isArray(array)) {
@@ -108,7 +107,7 @@ class Command {
   }
 
   /**
-   * @param message
+   * @param   {string}  message
    * @returns {Command}
    */
   parse (message) {
@@ -138,28 +137,23 @@ class Command {
   */
   validate () {
     if (this.exists()) {
-      const instance = this.instance
-
       /* Simple Command */
-      if (instance && instance.type === 'simple') {
+      if (this.is('simple')) {
         return
       }
 
       /* Complex Command */
-      if (instance && instance.type === 'complex') {
-        if (!instance.actions[this.action]) {
-          const suggestions = this.suggestions()
-
+      if (this.is('complex')) {
+        if (!this.actionExists()) {
           this.errors = {
             status: 'error',
-            message: `no action provided for command. Actions for .${this.name}: ${suggestions}`
+            message: `no action provided for command. Actions for .${this.name}: ${this.suggestions()}`
           }
         } else {
-          /* @todo: add args names like .command action <arg1> <arg2 */
           if (!this.target) {
             this.errors = {
               status: 'error',
-              message: `no target player provided for command .${this.name} ${this.action} <target>`
+              message: `no target player provided for command .${this.name} ${this.action} ${this.args()}`
             }
           }
         }
@@ -173,7 +167,14 @@ class Command {
    * @returns {boolean}
    */
   exists () {
-    return this.name in this.available
+    return this.name in this.commands
+  }
+
+  /**
+   * @returns {*|NotificationAction}
+   */
+  actionExists () {
+    return this.instance.actions[this.action]
   }
 
   /**
@@ -181,7 +182,20 @@ class Command {
    * @returns {string}
    */
   suggestions () {
-    return Object.keys(this.instance.actions).join(', ')
+    return Object.keys(this.instance.actions).length > 0
+      ? Object.keys(this.instance.actions).join(', ')
+      : ''
+  }
+
+  /**
+   * @returns {string}
+   */
+  args () {
+    return this.actionExists() && this.instance.actions[this.action].args.length > 0
+      ? this.instance.actions[this.action].args.map(function (arg) {
+        return '<' + arg + '>'
+      }).join(' ')
+      : ''
   }
 
   /**
@@ -200,6 +214,14 @@ class Command {
    */
   hasErrors () {
     return this.errors.length > 0
+  }
+
+  /**
+   * @param   {string}  type
+   * @returns {boolean}
+   */
+  is (type) {
+    return this.instance && this.instance.type === type
   }
 }
 
