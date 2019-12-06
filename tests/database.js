@@ -1,13 +1,14 @@
-const Database = require('../app/database')
-const db = new Database()
+const app = require('../bootstrap/app')
 
-const random = [...Array(10)].map(i => (~~(Math.random() * 36)).toString(36)).join('')
+const Offender = app.resolve('Offender')
+const Citation = app.resolve('Citation')
 
-db.table = 'offenders'
-const row = db.create({ name: random, alliance: 'GDPS' })
+let offender = Offender.search('afasdff')
 
-db.table = 'citations'
-db.create({ offender_id: row.lastInsertRowid, note: 'Broke ROE Rule D Issues' })
-db.where('offender_id', 1)
+console.log(offender)
 
-db.delete(row.lastInsertRowid, 'offender_id')
+if (!offender) {
+  Offender.add({ name: 'afasdff' })
+}
+
+Citation.add({ offender_id: offender.id, note: 'test test' })

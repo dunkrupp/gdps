@@ -7,18 +7,24 @@ const Database = require('./database')
 
 class Citation {
   constructor () {
-    this.command = 'citation'
     this.table = 'citations'
     this.fields = ['offender_id', 'note']
     this.connection = new Database({ table: this.table })
     this.embed = new discord.RichEmbed()
     this.bot = new Bot()
+    this._command = null
+  }
+
+  get command () {
+    return this._command
+  }
+
+  set command (command) {
+    this._command = command
   }
 
   search (id) {
-    this.connection.find(
-      //
-    )
+    this.connection.where('')
   }
 
   total (id) {
@@ -32,9 +38,7 @@ class Citation {
   add (params) {
     // Find or Create Offender
 
-    this.connection.create(
-
-    )
+    this.connection.create(params)
   }
 
   clear (id) {
@@ -50,9 +54,8 @@ class Citation {
   }
 
   run (command) {
-    // Do logic
-
-    return ''// Embed or Text?
+    this.command = command
+    return this[command.action]()
   }
 }
 

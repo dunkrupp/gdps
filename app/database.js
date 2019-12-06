@@ -81,7 +81,6 @@ class Database {
 
   /**
    *
-   * @param attributes
    * @returns {boolean|*}
    */
   create (attributes) {
