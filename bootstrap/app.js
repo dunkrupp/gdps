@@ -9,6 +9,7 @@ module.exports = {
   Offender: require('../app/offender'),
   Roe: require('../app/roe'),
   Discord: require('discord.js'),
+  Database: require('../app/database'),
 
   /** Export Methods */
   /**
@@ -41,6 +42,7 @@ module.exports = {
     if (typeof string !== 'string') {
       return ''
     }
+
     return string.charAt(0).toUpperCase() + string.slice(1)
   },
 
@@ -55,7 +57,9 @@ module.exports = {
         this.capitalize(command.name)
       )
 
-      return resolved.run(command)
+      return resolved.run(
+        command
+      )
     }
   }
 }

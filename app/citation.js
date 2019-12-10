@@ -8,23 +8,31 @@ const Database = require('./database')
 class Citation {
   constructor () {
     this.table = 'citations'
-    this.fields = ['offender_id', 'note']
     this.connection = new Database({ table: this.table })
     this.embed = new discord.RichEmbed()
     this.bot = new Bot()
-    this._command = null
+    this._offender_id = null
+    this._note = null
   }
 
-  get command () {
-    return this._command
+  get offenderId () {
+    return this._offender_id
   }
 
-  set command (command) {
-    this._command = command
+  set offenderId (id) {
+    this._offender_id = id
+  }
+
+  get note () {
+    return this._note
+  }
+
+  set note (text) {
+    this._note = text
   }
 
   search (id) {
-    this.connection.where('')
+    return this.connection.where('offender_id', id)
   }
 
   total (id) {
@@ -35,10 +43,10 @@ class Citation {
     //
   }
 
-  add (params) {
-    // Find or Create Offender
-
-    this.connection.create(params)
+  add () {
+    this.connection.create(
+      { offender_id: this.offenderId, note: this.note }
+    )
   }
 
   clear (id) {
@@ -53,9 +61,25 @@ class Citation {
     // Create Dynamic Embed
   }
 
+  /**
+   * @param command
+   * @returns {*}
+   */
   run (command) {
-    this.command = command
-    return this[command.action]()
+    const offender = new Offender()
+    let target = offender.search(command.target)
+
+    if (!target) {
+      target = offender.add({
+        name: command.target
+        /* @todo: alliances  */
+      })
+    }
+
+    this.offenderId = target.id
+    this[command.action]()
+
+    return this.message
   }
 }
 

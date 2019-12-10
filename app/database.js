@@ -12,6 +12,7 @@ class Database {
     this._db = null
     this._rows = []
     this._attributes = {}
+    this._lastInsertId = null
     this._table = (opts !== undefined && 'table' in opts) ? opts.table : ''
     this.connect()
   }
@@ -66,6 +67,20 @@ class Database {
   }
 
   /**
+   * @returns {null}
+   */
+  get lastInsertId () {
+    return this._lastInsertId
+  }
+
+  /**
+   * @param id
+   */
+  set lastInsertId (id) {
+    this._lastInsertId = id
+  }
+
+  /**
    * Sets the database connection
    */
   connect () {
@@ -90,7 +105,12 @@ class Database {
       `INSERT INTO ${this.table} (${this.columns.join(',')}) VALUES (${this.binds});`
     )
 
-    return statement.run(this.values)
+    const result = statement.run(this.values)
+
+    /* Set Last Insert ID */
+    this.lastInsertId = result.lastInsertRowid
+
+    return this.where('id', result.lastInsertRowid)
   }
 
   /**

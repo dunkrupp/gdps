@@ -50,13 +50,11 @@ Client.on('message', message => {
   if (command.hasErrors()) {
     reply(command.errors)
   } else {
-    try {
-      message.channel.send(
-        app.dispatch(command)
-      )
-    } catch (error) {
-      console.log(error)
-    }
+    message.channel.send(
+      app.dispatch(command)
+    ).catch((error) => {
+      console.error(error)
+    })
   }
 
   command.clean()

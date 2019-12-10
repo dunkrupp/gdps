@@ -7,28 +7,36 @@ const Database = require('./database')
 class Offender {
   constructor () {
     this.table = 'offenders'
-    this.fields = ['name', 'alliance']
     this.connection = new Database({ table: this.table })
     this.embed = new discord.RichEmbed()
     this.bot = new Bot()
-    this._command = null
+    this._name = null
+    this._alliance = null
   }
 
-  get command () {
-    return this._command
+  get name () {
+    return this._name
   }
 
-  set command (command) {
-    this._command = command
+  set name (value) {
+    this._name = value
+  }
+
+  get alliance () {
+    return this._alliance
+  }
+
+  set alliance (value) {
+    this._alliance = value
   }
 
   search (name) {
     return this.connection.where('name', name)
   }
 
-  add (params) {
-    this.connection.create(
-      params
+  add () {
+    return this.connection.create(
+      { name: this.name, alliance: this.alliance }
     )
   }
 
@@ -37,8 +45,8 @@ class Offender {
   }
 
   run (command) {
-    this.command = command
-    return this[command.action]
+    this[command.action]()
+    return this.message
   }
 }
 
