@@ -1,7 +1,7 @@
 'use strict'
 
 const discord = require('discord.js')
-const Bot = require('./bot')
+const Bot = require('./Bot')
 
 /* @todo: Make driven by markdown or something */
 class Roe {

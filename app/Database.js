@@ -9,12 +9,27 @@ class Database {
    * @param opts
    */
   constructor (opts) {
-    this._db = null
+    this._connection = null
     this._rows = []
     this._attributes = {}
     this._lastInsertId = null
     this._table = (opts !== undefined && 'table' in opts) ? opts.table : ''
     this.connect()
+    return this
+  }
+
+  /**
+   * @returns {null}
+   */
+  get connection () {
+    return this._connection
+  }
+
+  /**
+   * @param adapter
+   */
+  set connection (adapter) {
+    this._connection = adapter
   }
 
   /**
@@ -84,18 +99,17 @@ class Database {
    * Sets the database connection
    */
   connect () {
-    this._db = new Sqlite(dbPath, { verbose: console.log })
+    this.connection = new Sqlite(dbPath, { verbose: console.log })
   }
 
   /**
    * Closes the connection
    */
   disconnect () {
-    this._db.close()
+    this.connection.close()
   }
 
   /**
-   *
    * @returns {boolean|*}
    */
   create (attributes) {
@@ -155,8 +169,7 @@ class Database {
    * @param statement
    */
   build (statement) {
-    console.log(statement)
-    statement = this._db.prepare(statement)
+    statement = this.connection.prepare(statement)
     return statement
   }
 

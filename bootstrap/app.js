@@ -2,14 +2,14 @@
 
 module.exports = {
   /** Export Classes */
-  Bot: require('../app/bot'),
-  Citation: require('../app/citation'),
-  Command: require('../app/command'),
-  Help: require('../app/help'),
-  Offender: require('../app/offender'),
-  Roe: require('../app/roe'),
+  Bot: require('../app/Bot'),
+  Citation: require('../app/models/Citation'),
+  Offender: require('../app/models/Offender'),
+  Command: require('../app/Command'),
+  Help: require('../app/Help'),
+  Roe: require('../app/Roe'),
   Discord: require('discord.js'),
-  Database: require('../app/database'),
+  Database: require('../app/Database'),
 
   /** Export Methods */
   /**

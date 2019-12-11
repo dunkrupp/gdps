@@ -1,5 +1,5 @@
 const app = require('../bootstrap/app')
-const Database = require('../app/database')
+const Database = require('../app/Database')
 const Command = new app.Command()
 const Help = new app.Help()
 const Bot = new app.Bot()
