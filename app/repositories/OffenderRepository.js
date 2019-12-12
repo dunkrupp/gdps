@@ -28,8 +28,9 @@ class OffenderRepository extends AbstractRepository {
    * @returns {attributes}
    */
   create (attributes) {
-    return this.connection.create(
-      attributes
+    return this.assign(
+      new Offender(),
+      this.connection.create(attributes)
     )
   }
 

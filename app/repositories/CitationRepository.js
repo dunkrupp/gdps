@@ -16,8 +16,8 @@ class CitationRepository extends AbstractRepository {
    * @param column
    * @returns {*}
    */
-  search (value, column = 'name') {
-    return this.connection.where(column, value)
+  search (value, column = 'id') {
+    return this.connection.all(column, value)
   }
 
   /**
@@ -31,11 +31,12 @@ class CitationRepository extends AbstractRepository {
   }
 
   /**
-   * @param id
+   * @param value
+   * @param column
    * @returns {*}
    */
-  delete (id) {
-    return this.connection.delete(id)
+  delete (value, column = 'id') {
+    return this.connection.delete(column, value)
   }
 
   /**
@@ -52,8 +53,8 @@ class CitationRepository extends AbstractRepository {
    * @param column
    * @returns {*}
    */
-  count (value, column = 'offender_id') {
-    return this.connection.where(column, value)
+  count (value, column = 'id') {
+    return this.connection.all(column, value).length
   }
 }
 

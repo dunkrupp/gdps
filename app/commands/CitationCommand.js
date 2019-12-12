@@ -14,39 +14,92 @@ class CitationCommand extends AbstractCommand {
     this._offenderRepository = new OffenderRepository()
   }
 
+  /**
+   * @returns {module:"discord.js".RichEmbed}
+   */
   get message () {
     this.headers()
     return this.embed
   }
 
+  /**
+   * @returns {null}
+   */
   get command () {
     return this._command
   }
 
+  /**
+   * @param value
+   */
   set command (value) {
     this._command = value
   }
 
+  /**
+   * @returns {CitationRepository}
+   */
   get repository () {
     return this._repository
   }
 
+  /**
+   * @returns {OffenderRepository}
+   */
   get offenderRepository () {
     return this._offenderRepository
   }
 
-  search (offenderId) {
-    this.repository.search(offenderId, 'offender_id')
+  /**
+   * @param offender
+   * @returns {module:"discord.js".RichEmbed}
+   */
+  search (offender) {
+    const citations = this.repository.search(offender.id, 'offender_id')
+
+    this.title = 'Citations | List'
+    this.description = `${offender.name}`
+
+    citations.slice(0, 5).map(citation => {
+      this.embed.addField(`ID #${citation.id}`, `${citation.note}`)
+    })
+
+    if (citations.length > 5) {
+      this.embed.addField('...', `Total Citations: ${citations.length}`)
+    }
 
     return this.message
   }
 
-  total (id) {
-    this.repository.search(id, 'offender_id')
+  /**
+   * @param offender
+   * @returns {module:"discord.js".RichEmbed}
+   */
+  total (offender) {
+    const count = this.repository.count(offender.id, 'offender_id')
+
+    this.title = 'Citations | Total'
+    this.description = `${offender.name}`
+    this.embed.addField('Count', `${count}`)
+
+    return this.message
   }
 
-  current (id) {
-    this.repository.search(id, 'offender_id')
+  /**
+   * @param offender
+   * @returns {module:"discord.js".RichEmbed}
+   */
+  current (offender) {
+    const citations = this.repository.search(offender.id, 'offender_id')
+
+    const newest = [...citations].pop()
+
+    this.title = 'Citations | Latest'
+    this.description = `${offender.name}`
+    this.embed.addField(`ID #${newest.id}`, `${newest.note}`)
+    this.embed.addField('Created', `${newest.created_at}`)
+
+    return this.message
   }
 
   /**
@@ -58,12 +111,9 @@ class CitationCommand extends AbstractCommand {
       { offender_id: offender.id, note: command.details }
     )
 
-    const count = this.repository.count(offender.id)
+    const count = this.repository.count(offender.id, 'offender_id')
 
-    console.log(count)
-    console.log(count.length)
-
-    this.title = `Citation #${count} Issued`
+    this.title = `Citations | #${count} Issued`
     this.description = `${offender.name}`
     this.embed.addField('Player ID', `${offender.id}`, true)
     this.embed.addField('Citation ID', `${row.id}`, true)
@@ -71,12 +121,24 @@ class CitationCommand extends AbstractCommand {
     return this.message
   }
 
-  clear (id) {
-    //
+  clear (offender) {
+    const result = this.repository.delete(offender.id, 'offender_id')
+
+    this.title = 'Citations | Cleared'
+    this.description = `${offender.name}`
+    this.embed.addField('Success', 'All citations have been cleared for player.')
+
+    return this.message
   }
 
-  resolve (id) {
-    //
+  resolve (offender, command) {
+    const result = this.repository.delete(command.details)
+
+    this.title = 'Citations | Resolved'
+    this.description = `${offender.name}`
+    this.embed.addField('Citation ID', `${command.details} has been resolved.`)
+
+    return this.message
   }
 
   /**
@@ -90,7 +152,6 @@ class CitationCommand extends AbstractCommand {
       this.command.target
     )
 
-    console.log(offender)
     if (!offender) {
       offender = this.offenderRepository.create({
         name: command.target

@@ -4,6 +4,7 @@ const Sqlite = require('better-sqlite3')
 const path = require('path')
 const dbPath = path.join(__dirname, '/../database/gdps.db')
 
+/* @todo: refactor to use statement query builder (return this and dynamically build */
 class Database {
   /**
    * @param opts
@@ -132,12 +133,14 @@ class Database {
    * @param column
    * @returns {*}
    */
-  delete (value, column = 'id') {
+  delete (column, value) {
     const statement = this.build(
       `DELETE FROM ${this.table} WHERE ${column} = ?;`
     )
 
-    return statement.run([value])
+    console.log(statement)
+
+    return statement.run(value)
   }
 
   /**
@@ -157,12 +160,13 @@ class Database {
   /**
    * @returns {Promise<[*]>}
    */
-  all (column = null, value = null, operator = '=') {
+  all (column = null, value = null, operator = '=', limit = 0) {
+    const where = (column && value) ? ` WHERE ${column} ${operator} ?;` : ';'
     const statement = this.build(
-      `SELECT * FROM ${this.table}` + (column && value) ? ` WHERE ${column} ${operator} ?;` : ';'
+      `SELECT * FROM ${this.table} ${where}`
     )
 
-    return statement.all()
+    return statement.all(value)
   }
 
   /**
