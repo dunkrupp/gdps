@@ -157,9 +157,9 @@ class Database {
   /**
    * @returns {Promise<[*]>}
    */
-  all () {
+  all (column = null, value = null, operator = '=') {
     const statement = this.build(
-      'SELECT * FROM $table;'
+      `SELECT * FROM ${this.table}` + (column && value) ? ` WHERE ${column} ${operator} ?;` : ';'
     )
 
     return statement.all()

@@ -45,6 +45,16 @@ class CitationRepository extends AbstractRepository {
   new (attributes = {}) {
     return new Citation(attributes)
   }
+
+  /**
+   *
+   * @param value
+   * @param column
+   * @returns {*}
+   */
+  count (value, column = 'offender_id') {
+    return this.connection.where(column, value)
+  }
 }
 
 module.exports = CitationRepository

@@ -1,12 +1,9 @@
 const app = require('../bootstrap/app')
 
-const Offender = app.resolve('Offender')
-const Citation = app.resolve('Citation')
+const OffenderRepository = require('../app/repositories/OffenderRepository')
 
-let offender = Offender.search('Test')
+const repository = new OffenderRepository()
 
-if (!offender) {
-  offender = Offender.add({ name: 'Test' })
-}
-
-Citation.add({ offender_id: offender.id, note: 'test test' })
+console.log(
+  repository.search('Drewbie5')
+)

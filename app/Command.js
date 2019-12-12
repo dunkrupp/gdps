@@ -98,11 +98,13 @@ class Command {
   }
 
   /**
-   * @param   {Array}   array
+   * @param   {Array}   details
    */
-  set details (array) {
-    if (Array.isArray(array)) {
-      this._details = array.join(' ')
+  set details (details) {
+    if (Array.isArray(details)) {
+      this._details = details.join(' ')
+    } else {
+      this._details = details
     }
   }
 

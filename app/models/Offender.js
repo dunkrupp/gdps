@@ -1,12 +1,12 @@
 'use strict'
 
-const OffenderRepository = require('../repositories/OffenderRepository')
+const AbstractModel = require('./AbstractModel')
 
-class Offender {
+class Offender extends AbstractModel {
   constructor () {
-    this._repository = new OffenderRepository()
-    this._name = null
-    this._alliance = null
+    super()
+    this.name = null
+    this.alliance = null
   }
 
   get name () {
@@ -23,22 +23,6 @@ class Offender {
 
   set alliance (value) {
     this._alliance = value
-  }
-
-  get repository () {
-    return this._repository
-  }
-
-  search (value) {
-    return this.repository.search(value)
-  }
-
-  add () {
-    return this.repository.create({ name: this.name, alliance: this.alliance })
-  }
-
-  run (command) {
-    this[command.action]()
   }
 }
 

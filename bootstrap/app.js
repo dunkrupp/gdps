@@ -1,13 +1,17 @@
 'use strict'
 
+const path = require('path')
+
 module.exports = {
+  root_path: path.join(__dirname, '../'),
+
   /** Export Classes */
   Bot: require('../app/Bot'),
-  Citation: require('../app/models/Citation'),
-  Offender: require('../app/models/Offender'),
   Command: require('../app/Command'),
-  Help: require('../app/Help'),
-  Roe: require('../app/Roe'),
+  Citation: require('../app/commands/CitationCommand'),
+  Offender: require('../app/commands/OffenderCommand'),
+  Help: require('../app/commands/HelpCommand'),
+  Roe: require('../app/commands/RoeCommand'),
   Discord: require('discord.js'),
   Database: require('../app/Database'),
 

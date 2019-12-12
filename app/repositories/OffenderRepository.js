@@ -17,7 +17,10 @@ class OffenderRepository extends AbstractRepository {
    * @returns {*}
    */
   search (value, column = 'name') {
-    return this.connection.where(column, value)
+    return this.assign(
+      new Offender(),
+      this.connection.where(column, value)
+    )
   }
 
   /**

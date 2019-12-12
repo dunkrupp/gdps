@@ -1,24 +1,20 @@
 'use strict'
 
-const discord = require('discord.js')
-const Bot = require('./Bot')
+const AbstractCommand = require('./AbstractCommand')
 
-class Help {
+class HelpCommand extends AbstractCommand {
   constructor () {
-    this.command = 'help'
+    super()
     this.title = 'Help | Commands'
     this.description = 'Any references to a \'player\' should be replaced with the target player name. ' +
       '\'id\' with the appopriate identifier.'
-    this.embed = new discord.RichEmbed()
-    this.bot = new Bot()
   }
 
+  /**
+   * @returns {module:"discord.js".RichEmbed}
+   */
   get message () {
-    this.embed.setAuthor(this.bot.getName)
-    this.embed.setTitle(this.title)
-    this.embed.setDescription(this.description)
-    this.embed.setColor(5998487)
-    this.embed.setTimestamp(Date.now())
+    this.headers()
     this.embed.addField(
       '```.help```',
       '- Invokes Help Command'
@@ -51,9 +47,13 @@ class Help {
     return this.embed
   }
 
+  /**
+   * @param command
+   * @returns {module:"discord.js".RichEmbed}
+   */
   run (command) {
     return this.message
   }
 }
 
-module.exports = Help
+module.exports = HelpCommand
