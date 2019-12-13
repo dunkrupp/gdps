@@ -138,8 +138,6 @@ class Database {
       `DELETE FROM ${this.table} WHERE ${column} = ?;`
     )
 
-    console.log(statement)
-
     return statement.run(value)
   }
 

@@ -13,18 +13,36 @@ const Command = new app.Command()
 /* Start-up Checks */
 Client.on('ready', () => {
   const fs = require('fs')
+  console.log('Bot Ready')
 
   /* Check for Database */
   fs.access(config.database, error => {
-    if (!error) {
-      console.log('Database Ready')
-    } else {
-      console.log('No Database Found')
+    if (error) {
+      throw error
     }
   })
-  console.log('Bot Ready')
+  console.log('Database Ready')
 
-  /* Set Bot */
+  /* Get Server ID and Roles */
+  const server = { guilds: [], roles: [] }
+  Client.guilds.forEach(function (guild) {
+    server.guilds.push(guild.id)
+
+    guild.roles.forEach((role) => {
+      server.roles.push({ id: role.id, name: role.name, permissions: role.permissions })
+    })
+  })
+
+  const data = JSON.stringify(server, null, 2)
+
+  fs.writeFileSync(app.root_path + '/config/server.json', data, error => {
+    if (error) {
+      throw error
+    }
+  })
+  console.log('Config Ready')
+
+  /* Set Bot Status */
   Client.user.setStatus('available')
   Client.user.setPresence({
     game: {
@@ -32,6 +50,7 @@ Client.on('ready', () => {
       type: 'LISTENING'
     }
   })
+  console.log('Client Ready')
 })
 
 Client.on('message', message => {

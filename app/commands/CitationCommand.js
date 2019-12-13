@@ -122,6 +122,7 @@ class CitationCommand extends AbstractCommand {
   }
 
   clear (offender) {
+    /* @todo Handle Logic */
     const result = this.repository.delete(offender.id, 'offender_id')
 
     this.title = 'Citations | Cleared'
@@ -133,10 +134,19 @@ class CitationCommand extends AbstractCommand {
 
   resolve (offender, command) {
     const result = this.repository.delete(command.details)
+    const response = { name: '', value: '' }
+
+    if (result.changes === 1) {
+      response.name = 'Citation ID'
+      response.value = `${command.details} has been resolved.`
+    } else {
+      response.name = 'Error'
+      response.value = `There was an error deleting Citation #${command.details}.\nPlease check the ID is correct.`
+    }
 
     this.title = 'Citations | Resolved'
     this.description = `${offender.name}`
-    this.embed.addField('Citation ID', `${command.details} has been resolved.`)
+    this.embed.addField(response.name, response.value)
 
     return this.message
   }
