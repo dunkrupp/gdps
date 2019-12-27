@@ -4,7 +4,7 @@ const Sqlite = require('better-sqlite3')
 const path = require('path')
 const dbPath = path.join(__dirname, '/../database/gdps.db')
 
-/* @todo: refactor to use statement query builder (return this and dynamically build */
+/* @todo: refactor to use statement query builder */
 class Database {
   /**
    * @param opts
@@ -158,21 +158,31 @@ class Database {
   /**
    * @returns {Promise<[*]>}
    */
-  all (column = null, value = null, operator = '=', limit = 0) {
-    const where = (column && value) ? ` WHERE ${column} ${operator} ?;` : ';'
+  all (column = null, value = null, operator = '=', take = null) {
+    const where = (column !== null && value !== null) ? ` WHERE ${column} ${operator} ?` : ''
+    const limit = (take !== null) ? ` LIMIT ${take}` : ''
     const statement = this.build(
-      `SELECT * FROM ${this.table} ${where}`
+      `SELECT * FROM ${this.table}${where}${limit};`
     )
 
-    return statement.all(value)
+    return value !== null ? statement.all(value) : statement.all()
   }
 
   /**
    * @param statement
    */
   build (statement) {
-    statement = this.connection.prepare(statement)
-    return statement
+    return this.connection.prepare(statement)
+  }
+
+  /**
+   * @param query
+   * @returns {Promise<[*]>}
+   */
+  raw (query) {
+    const statement = this.build(query)
+
+    return statement.all()
   }
 
   /**
@@ -181,6 +191,13 @@ class Database {
   clear () {
     this._attributes = []
     this._rows = []
+  }
+
+  /**
+   * @returns {string}
+   */
+  softDeleted () {
+    return 'where soft_delete = 1'
   }
 }
 

@@ -6,7 +6,7 @@ class HelpCommand extends AbstractCommand {
   constructor () {
     super()
     this.title = 'Help | Commands'
-    this.description = 'Any references to a \'player\' should be replaced with the target player name. ' +
+    this.description = 'Any references to a \'name\' should be replaced with the target player name. ' +
       '\'id\' with the appopriate identifier.'
   }
 
@@ -20,28 +20,36 @@ class HelpCommand extends AbstractCommand {
       '- Invokes Help Command'
     )
     this.embed.addField(
-      '```.citation search \'player\'```',
-      '- Displays all citation related information for a user if they exist.'
+      '```.roe```',
+      '- Invokes ROE Command'
     )
     this.embed.addField(
-      '```.citation total \'player\'```',
+      '```.citation search \'name\'```',
+      '- Displays all citation related information for a player if they exist.'
+    )
+    this.embed.addField(
+      '```.citation total \'name\'```',
       '- Displays total number of citations.'
     )
     this.embed.addField(
-      '```.citation current \'player\'```',
+      '```.citation current \'name\'```',
       '- Displays most recent citation.'
     )
     this.embed.addField(
-      '```.citation add \'player\' \'note\'```',
+      '```.citation add \'name\' \'note\'```',
       '- Add citation to a player.'
     )
     this.embed.addField(
-      '```.citation clear \'player\'```',
+      '```.citation clear \'name\'```',
       '- Clears all citations from a player.'
     )
     this.embed.addField(
-      '```.citation resolve \'player\' \'id\'```',
-      '- Remove a citation from a player with \'id\'.'
+      '```.citation resolve \'name\' \'id\'```',
+      '- Remove a citation from a player \'name\' with citation \'id\'.'
+    )
+    this.embed.addField(
+      '```.offender top \'#\'```',
+      '- Prints a list of the top offenders.'
     )
 
     return this.embed

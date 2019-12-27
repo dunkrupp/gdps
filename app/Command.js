@@ -11,6 +11,7 @@ class Command {
     this._target = ''
     this._details = ''
     this._errors = []
+    this._accessible = false
   }
 
   /**
@@ -70,10 +71,24 @@ class Command {
   }
 
   /**
-   * @param   error
+   * @param  error
    */
   set errors (error) {
     this._errors.push(error)
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  get accessible () {
+    return this._accessible
+  }
+
+  /**
+   * @param   {boolean} value
+   */
+  set accessible (value) {
+    this._accessible = value
   }
 
   /**
@@ -98,7 +113,7 @@ class Command {
   }
 
   /**
-   * @param   {Array}   details
+   * @param   {Array|string}   details
    */
   set details (details) {
     if (Array.isArray(details)) {
@@ -109,28 +124,22 @@ class Command {
   }
 
   /**
-   * @param   {string}  message
+   * @param   {object}  message
    * @returns {Command}
    */
   parse (message) {
-    const [name, action, target, ...details] = this.parts(message)
+    const [name, action, target, ...details] = this.split(message.content)
 
-    this.name = name
-    this.action = action
+    this.name = name ? name.toLowerCase() : name
+    this.action = action ? action.toLowerCase() : action
     this.target = target
     this.details = details
+
+    this.accessibility(message)
 
     this.validate()
 
     return this
-  }
-
-  /**
-   * @param message
-   * @returns {string[]}
-   */
-  parts (message) {
-    return message.slice(this._prefix.length).trim().split(/ +/g)
   }
 
   /*
@@ -139,6 +148,13 @@ class Command {
   */
   validate () {
     if (this.exists()) {
+      if (!this.accessible) {
+        this.errors = {
+          message: 'you are not authorized to use this command.'
+        }
+        return
+      }
+
       /* Simple Command */
       if (this.is('simple')) {
         return
@@ -148,20 +164,45 @@ class Command {
       if (this.is('complex')) {
         if (!this.actionExists()) {
           this.errors = {
-            status: 'error',
-            message: `no action provided for command. Actions for .${this.name}: ${this.suggestions()}`
+            message: `no action provided for command. Actions for ${this.prefix}${this.name}: ${this.suggestions()}`
           }
         } else {
-          if (!this.target) {
+          if (this.required('target') && !this.target) {
             this.errors = {
-              status: 'error',
-              message: `no target player provided for command .${this.name} ${this.action} ${this.args()}`
+              message: `no target player provided for command ${this.prefix}${this.name} ${this.action} ${this.args()}`
             }
           }
         }
       }
     } else {
-      this.errors = { status: 'error', message: '' }
+      this.errors = { message: 'I could not find a command that matches that syntax, use .help to see commands available' }
+    }
+  }
+
+  /**
+   * @param message
+   * @returns {string[]}
+   */
+  split (message) {
+    return message.slice(this._prefix.length).trim().split(/ +/g)
+  }
+
+  /**
+   * @param message
+   */
+  accessibility (message) {
+    if (message.member.permissions.has('ADMINISTRATOR')) {
+      this.accessible = true
+      return
+    }
+
+    const whitelist = this.whitelist()
+    const matched = message.member.roles.filter(
+      role => whitelist.includes(role.name)
+    )
+
+    if (matched.size > 0 || whitelist.includes('All')) {
+      this.accessible = true
     }
   }
 
@@ -193,8 +234,8 @@ class Command {
    * @returns {string}
    */
   args () {
-    return this.actionExists() && this.instance.actions[this.action].args.length > 0
-      ? this.instance.actions[this.action].args.map(function (arg) {
+    return this.actionExists() && this.instance.actions[this.action].required.length > 0
+      ? this.instance.actions[this.action].required.map(function (arg) {
         return '<' + arg + '>'
       }).join(' ')
       : ''
@@ -209,13 +250,7 @@ class Command {
     this.target = ''
     this.details = ''
     this.errors.length = 0
-  }
-
-  /**
-   * @returns {boolean}
-   */
-  hasErrors () {
-    return this.errors.length > 0
+    this.accessible = false
   }
 
   /**
@@ -224,6 +259,38 @@ class Command {
    */
   is (type) {
     return this.instance && this.instance.type === type
+  }
+
+  /**
+   * Checks if a field is required for the command
+   * @param   {string}  field
+   */
+  required (field) {
+    if (this.is('simple')) {
+      return this.instance
+    } else {
+      return this.instance.actions[this.action].required.includes(field)
+    }
+  }
+
+  /**
+   * @returns {Command.whitelist|*}
+   */
+  whitelist () {
+    if (this.is('simple')) {
+      return this.instance.whitelist
+    } else {
+      return this.actionExists()
+        ? this.instance.actions[this.action].whitelist
+        : []
+    }
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  hasErrors () {
+    return this.errors.length > 0
   }
 }
 

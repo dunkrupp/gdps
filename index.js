@@ -9,6 +9,7 @@ const app = require('./bootstrap/app')
 /** Classes */
 const Client = new app.Discord.Client()
 const Command = new app.Command()
+const Role = new app.Role()
 
 /* Start-up Checks */
 Client.on('ready', () => {
@@ -25,10 +26,10 @@ Client.on('ready', () => {
 
   /* Get Server ID and Roles */
   const server = { guilds: [], roles: [] }
-  Client.guilds.forEach(function (guild) {
+  Client.guilds.forEach(guild => {
     server.guilds.push(guild.id)
 
-    guild.roles.forEach((role) => {
+    guild.roles.forEach(role => {
       server.roles.push({ id: role.id, name: role.name, permissions: role.permissions })
     })
   })
@@ -54,6 +55,7 @@ Client.on('ready', () => {
 })
 
 Client.on('message', message => {
+  /* Ignore bot & non-prefixed messages */
   if (
     message.author.bot ||
     !message.content.startsWith(config.prefix)
@@ -61,40 +63,27 @@ Client.on('message', message => {
     return false
   }
 
+  /* Parse and match command */
   const command = Command.parse(
-    message.content
+    message
   )
 
   /** @todo: process error if exists */
   if (command.hasErrors()) {
-    reply(command.errors)
+    message.reply(command.errors.map(error => `${error.message}`))
   } else {
-    message.channel.send(
-      app.dispatch(command)
-    ).catch((error) => {
-      console.error(error)
-    })
+    if (command.accessible) {
+      message.channel.send(
+        app.dispatch(command)
+      ).catch(error => {
+        console.error(error)
+      })
+    } else {
+      message.reply('You are not authorized to use this command.')
+    }
   }
 
   command.clean()
-
-  /**
-   * Respond with any errors.
-   * @param errors
-   */
-  function reply (errors) {
-    let text = ''
-    if (Array.isArray(errors)) {
-      text = errors.map(error => `${error.message}`)
-    }
-    if (typeof errors === 'string') {
-      text = errors
-    }
-    message.reply(
-      text ||
-      'I could not find a command that matches that syntax, use .help to see commands available'
-    )
-  }
 })
 
 Client.login(config.token)

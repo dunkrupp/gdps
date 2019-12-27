@@ -13,7 +13,13 @@ class AbstractRepository {
 
   new () {}
 
-  assign (object, attributes) {
+  /**
+   * Hydrate object with data
+   * @param object
+   * @param attributes
+   * @returns {*}
+   */
+  hydrate (object, attributes) {
     return attributes !== undefined
       ? Object.assign(object, attributes)
       : null

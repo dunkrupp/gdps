@@ -48,7 +48,6 @@ class CitationRepository extends AbstractRepository {
   }
 
   /**
-   *
    * @param value
    * @param column
    * @returns {*}

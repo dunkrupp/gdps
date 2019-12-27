@@ -68,6 +68,10 @@ class CitationCommand extends AbstractCommand {
       this.embed.addField('...', `Total Citations: ${citations.length}`)
     }
 
+    if (citations.length === 0) {
+      this.embed.addField('...', 'Total Citations: 0')
+    }
+
     return this.message
   }
 
@@ -78,9 +82,9 @@ class CitationCommand extends AbstractCommand {
   total (offender) {
     const count = this.repository.count(offender.id, 'offender_id')
 
-    this.title = 'Citations | Total'
+    this.title = 'Citations | Count'
     this.description = `${offender.name}`
-    this.embed.addField('Count', `${count}`)
+    this.embed.addField('...', `Total Citations: ${count}`)
 
     return this.message
   }
@@ -121,6 +125,10 @@ class CitationCommand extends AbstractCommand {
     return this.message
   }
 
+  /**
+   * @param offender
+   * @returns {module:"discord.js".RichEmbed}
+   */
   clear (offender) {
     /* @todo Handle Logic */
     const result = this.repository.delete(offender.id, 'offender_id')
@@ -132,6 +140,11 @@ class CitationCommand extends AbstractCommand {
     return this.message
   }
 
+  /**
+   * @param offender
+   * @param command
+   * @returns {module:"discord.js".RichEmbed}
+   */
   resolve (offender, command) {
     const result = this.repository.delete(command.details)
     const response = { name: '', value: '' }
@@ -162,21 +175,17 @@ class CitationCommand extends AbstractCommand {
       this.command.target
     )
 
-    if (!offender) {
+    if (!offender && command.action === 'add') {
       offender = this.offenderRepository.create({
         name: command.target
         /* @todo: regex alliances  */
       })
     }
 
-    if (offender.has('id')) {
+    if (offender && offender.has('id')) {
       return this[command.action](offender, command)
     } else {
-      let msg = ''
-      if (!offender.id) {
-        msg = 'NO OFFENDER FOUND'
-      }
-      return `\nError: Arguments Parsed: ${command.name} ${command.action} ${command.target} ${command.details} \nResult: ${msg}`
+      return 'No Offender Found'
     }
   }
 }

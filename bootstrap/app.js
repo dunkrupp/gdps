@@ -12,10 +12,34 @@ module.exports = {
   Offender: require('../app/commands/OffenderCommand'),
   Help: require('../app/commands/HelpCommand'),
   Roe: require('../app/commands/RoeCommand'),
+  Role: require('../app/Role'),
   Discord: require('discord.js'),
   Database: require('../app/Database'),
 
   /** Export Methods */
+  /**
+   * Adds an item to the container.
+   * @param key
+   * @param path
+   */
+  add: function (key, path) {
+    try {
+      if (!this.exists(key)) {
+        this[key] = require(path)
+      }
+    } catch (error) {
+      console.error(`Error adding ${key} at ${path} to container.`)
+    }
+  },
+
+  /**
+   * Removes a key from the container.
+   * @param key
+   */
+  remove: function (key) {
+    delete this.key
+  },
+
   /**
    * Retrieves an instance of the class from the container.
    * @param instance
