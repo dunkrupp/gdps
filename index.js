@@ -9,7 +9,6 @@ const app = require('./bootstrap/app')
 /** Classes */
 const Client = new app.Discord.Client()
 const Command = new app.Command()
-const Role = new app.Role()
 
 /* Start-up Checks */
 Client.on('ready', () => {

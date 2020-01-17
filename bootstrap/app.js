@@ -12,7 +12,6 @@ module.exports = {
   Offender: require('../app/commands/OffenderCommand'),
   Help: require('../app/commands/HelpCommand'),
   Roe: require('../app/commands/RoeCommand'),
-  Role: require('../app/Role'),
   Discord: require('discord.js'),
   Database: require('../app/Database'),
 

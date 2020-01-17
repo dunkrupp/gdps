@@ -196,13 +196,15 @@ class Command {
       return
     }
 
-    const whitelist = this.whitelist()
-    const matched = message.member.roles.filter(
-      role => whitelist.includes(role.name)
-    )
+    if (this.exists()) {
+      const whitelist = this.whitelist()
+      const matched = message.member.roles.filter(
+        role => whitelist.includes(role.name)
+      )
 
-    if (matched.size > 0 || whitelist.includes('All')) {
-      this.accessible = true
+      if (matched.size > 0 || whitelist.includes('All')) {
+        this.accessible = true
+      }
     }
   }
 
